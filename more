@@ -3,7 +3,11 @@
 
 const int numShiftRegisters = 2;
 const int numLeds = numShiftRegisters * 8;
-Adafruit_74HC595 matrix[numShiftRegisters];
+
+Adafruit_74HC595 matrix[numShiftRegisters] = {
+  Adafruit_74HC595(D1, D2, D3),  // Adjust pin numbers (clock, latch, data) for your setup
+  Adafruit_74HC595(D4, D5, D6)   // Adjust pin numbers (clock, latch, data) for your setup
+};
 
 void setup() {
   for (int i = 0; i < numShiftRegisters; i++) {
