@@ -1,0 +1,85 @@
+#include <Adafruit_GFX.h>
+#include <Adafruit_LEDBackpack.h>
+
+const int numShiftRegisters = 2;
+const int numLeds = numShiftRegisters * 8;
+Adafruit_74HC595 matrix[numShiftRegisters];
+
+void setup() {
+  for (int i = 0; i < numShiftRegisters; i++) {
+    matrix[i].begin(i);
+  }
+}
+
+void loop() {
+  effectLeftToRight();
+  effectRightToLeft();
+  effectCenterOut();
+  effectSidesIn();
+  effectBlink();
+}
+
+void effectLeftToRight() {
+  for (int i = 0; i < numLeds; i++) {
+    int shiftRegisterIndex = i / 8;
+    int ledIndex = i % 8;
+
+    matrix[shiftRegisterIndex].writeDigitNum(0, ledIndex + 1);
+    matrix[shiftRegisterIndex].writeDisplay();
+    delay(100);
+  }
+}
+
+void effectRightToLeft() {
+  for (int i = numLeds - 1; i >= 0; i--) {
+    int shiftRegisterIndex = i / 8;
+    int ledIndex = i % 8;
+
+    matrix[shiftRegisterIndex].writeDigitNum(0, ledIndex + 1);
+    matrix[shiftRegisterIndex].writeDisplay();
+    delay(100);
+  }
+}
+
+void effectCenterOut() {
+  for (int i = 0; i < numLeds / 2; i++) {
+    int ledIndex1 = numLeds / 2 - i - 1;
+    int ledIndex2 = numLeds / 2 + i;
+
+    matrix[0].writeDigitNum(0, ledIndex1 + 1);
+    matrix[1].writeDigitNum(0, ledIndex2 + 1);
+
+    matrix[0].writeDisplay();
+    matrix[1].writeDisplay();
+    delay(100);
+  }
+}
+
+void effectSidesIn() {
+  for (int i = 0; i < numLeds / 2; i++) {
+    int ledIndex1 = i;
+    int ledIndex2 = numLeds - i - 1;
+
+    matrix[0].writeDigitNum(0, ledIndex1 + 1);
+    matrix[1].writeDigitNum(0, ledIndex2 + 1);
+
+    matrix[0].writeDisplay();
+    matrix[1].writeDisplay();
+    delay(100);
+  }
+}
+
+void effectBlink() {
+  for (int i = 0; i < 5; i++) {
+    for (int j = 0; j < numShiftRegisters; j++) {
+      matrix[j].fillDisplay(0b11111111);
+      matrix[j].writeDisplay();
+    }
+    delay(200);
+    for (int j = 0; j < numShiftRegisters; j++) {
+      matrix[j].clear();
+      matrix[j].writeDisplay();
+    }
+    delay(200);
+  }
+}
